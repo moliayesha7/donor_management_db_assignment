@@ -41,6 +41,13 @@ Route::match(['get', 'post'], 'webhooks/meta/whatsapp', [NotificationWebhookCont
 Route::get('/whatsapp/webhook', [WhatsAppWebhookController::class, 'verify'])->withoutMiddleware([\App\Http\Middleware\Authenticate::class, 'auth:sanctum']);
 Route::post('/whatsapp/webhook', [WhatsAppWebhookController::class, 'handle'])->withoutMiddleware([\App\Http\Middleware\Authenticate::class, 'auth:sanctum']);
 
+Route::post('/process-donation', [DonationController::class, 'processStripePayment']);
+Route::post('/stripe/webhook', [DonationController::class, 'handleWebhook']);
+
+Route::get('/donation-success', [DonationController::class, 'success'])->name('donation.success');
+Route::get('/donation-cancel', [DonationController::class, 'cancel'])->name('donation.cancel');
+
+
 // Protected endpoints (Sanctum bearer token)
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('me', [AuthController::class, 'me']);

@@ -12,7 +12,7 @@ use App\Models\Donation;
 class WhatsAppWebhookController extends Controller
 {
     /**
-     * মেটা ওয়েবহুক ভেরিফিকেশন (GET)
+     * meta webhook verification 
      */
     public function verify(Request $request)
     {
@@ -24,9 +24,7 @@ class WhatsAppWebhookController extends Controller
         return response()->json(['error' => 'Verification failed'], 403);
     }
 
-    /**
-     * হোয়াটসঅ্যাপের ইনকামিং মেসেজ হ্যান্ডেল এবং অটো-রিপ্লাই (POST)
-     */
+   
   public function handle(Request $request)
 {
     // Read PHP raw input directly
@@ -98,7 +96,7 @@ class WhatsAppWebhookController extends Controller
     $data = [
         'messaging_product' => 'whatsapp',
         'recipient_type'    => 'individual',
-        'to'                => $cleanTo, // বা '+'.$cleanTo দিয়েও মেটা টেস্ট অ্যাকাউন্টে ট্রাই করা যায়
+        'to'                => $cleanTo, 
         'type'              => 'text',
         'text'              => [
             'preview_url' => false,

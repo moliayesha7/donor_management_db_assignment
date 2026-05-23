@@ -31,7 +31,7 @@ class DonorSourceSeeder extends Seeder
             [
                 'name' => 'Event/Fundraiser',
                 'description' => 'Donations collected during physical events.',
-                'is_active' => false, // স্ক্রিনশটের মতো ডিফল্ট ইনঅ্যাক্টিভ টেস্ট করার জন্য
+                'is_active' => false, 
             ],
         ];
 

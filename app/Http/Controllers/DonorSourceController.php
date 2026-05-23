@@ -23,9 +23,9 @@ class DonorSourceController extends Controller
     public function index(Request $request)
     {
         $query = DonorSource::query()
-            ->withCount('donors'); // এই সোর্সের আন্ডারে কতজন ডোনার আছে তা কাউন্ট করবে
+            ->withCount('donors'); // how many doner have under this donor source
 
-        // সার্চ ফিল্টার (Name অথবা Description দিয়ে)
+        // search filter Name or Description 
         if ($search = $request->query('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
@@ -33,7 +33,7 @@ class DonorSourceController extends Controller
             });
         }
 
-        // একটিভ/ইনঅ্যাক্টিভ ফিল্টার
+        // active/inactive filter
         if ($request->has('is_active')) {
             $isActive = filter_var($request->query('is_active'), FILTER_VALIDATE_BOOLEAN);
             $query->where('is_active', $isActive);
@@ -68,7 +68,7 @@ class DonorSourceController extends Controller
      */
     public function store(StoreDonorSourceRequest $request)
     {
-        // ফর্ম রিকোয়েস্ট ক্লাস ব্যবহার না করলে সরাসরি এখানে ভ্যালিডেশন
+        
         $source = DonorSource::create($request->validated());
 
         return response()->json([
@@ -140,7 +140,7 @@ class DonorSourceController extends Controller
     {
         $source = DonorSource::findOrFail($id);
 
-        // ডেটা ইন্টিগ্রিটি সুরক্ষার জন্য: কোনো ডোনার এই সোর্স ব্যবহার করলে ডিলিট ব্লক হবে
+     
         if ($source->donors()->exists()) {
             return response()->json([
                 'success' => false,

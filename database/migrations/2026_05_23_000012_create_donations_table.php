@@ -15,13 +15,14 @@ return new class extends Migration
             $table->id();
             $table->foreignId('donor_id')->constrained('donors')->onDelete('cascade'); 
             $table->foreignId('project_id')->constrained('projects')->onDelete('cascade'); 
-            $table->foreignId('student_id')->nullable()->constrained('students')->onDelete('set null'); // Optional [cite: 102]
+            $table->foreignId('student_id')->nullable()->constrained('students')->onDelete('set null'); // Optional 
             $table->foreignId('campaign_id')->nullable()->constrained('campaigns')->nullOnDelete();
             $table->text('amount');
-            $table->string('payment_method'); // Bank, Stripe, bKash ইত্যাদি [cite: 103]
+            $table->string('payment_method'); // Bank, Stripe, bKash etc 
             $table->dateTime('transaction_date'); 
-            $table->string('receipt_number')->unique(); // অটো জেনারেটেড রিসিট নাম্বার
+            $table->string('receipt_number')->unique(); 
             $table->enum('status', ['pending', 'confirmed', 'failed'])->default('pending');
+            $table->string('stripe_session_id')->nullable();
             $table->boolean('consent_given')->default(false);
             $table->timestamp('consent_at')->nullable();
             $table->boolean('gift_aid')->default(false);

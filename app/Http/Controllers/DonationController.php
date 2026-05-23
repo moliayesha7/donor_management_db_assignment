@@ -42,7 +42,7 @@ class DonationController extends Controller
             $query->where('is_recurring', filter_var($request->query('is_recurring'), FILTER_VALIDATE_BOOLEAN));
         }
 
-        // ডোনারের নাম দিয়ে গ্লোবাল লাইভ সার্চ
+        // global search across receipt_number, donor name, and donor ID code
         if ($search = $request->query('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('receipt_number', 'like', "%{$search}%")
@@ -60,7 +60,80 @@ class DonationController extends Controller
             'data' => $donations
         ], 200);
     }
+    
+public function processStripePayment(Request $request)
+{
+   
+    $data = $request->all();
+    $data['receipt_number'] = $this->nextReceiptNumber();
+    $data['status'] = 'pending';
+    
+   
+    if (!isset($data['payment_method'])) {
+        $data['payment_method'] = 'Stripe';
+    }
 
+    try {
+        $donation = Donation::create($data);
+        \Log::info('Donation record created with ID: ' . $donation->id);
+    } catch (\Exception $e) {
+        \Log::error('Donation Creation Error: ' . $e->getMessage());
+        return response()->json(['error' => 'Database error: ' . $e->getMessage()], 500);
+    }
+
+    // 3 stripe session create
+    Stripe::setApiKey(env('STRIPE_SECRET'));
+
+    try {
+        $session = Session::create([
+            'payment_method_types' => ['card'],
+            'line_items' => [[
+                'price_data' => [
+                    'currency' => 'usd',
+                    'product_data' => ['name' => 'Donation - ' . $donation->receipt_number],
+                    'unit_amount' => (int)($request->amount * 100),
+                ],
+                'quantity' => 1,
+            ]],
+            'mode' => 'payment',
+            'metadata' => ['donation_id' => $donation->id],
+            'success_url' => route('donation.success') . '?session_id={CHECKOUT_SESSION_ID}',
+            'cancel_url' => route('donation.cancel'),
+        ]);
+
+        // session id update
+        $donation->update(['stripe_session_id' => $session->id]);
+
+        return response()->json(['url' => $session->url]);
+
+    } catch (\Exception $e) {
+        \Log::error('Stripe Session Error: ' . $e->getMessage());
+        return response()->json(['error' => 'Stripe error: ' . $e->getMessage()], 500);
+    }
+}
+
+     public function success(Request $request)
+{
+    Stripe::setApiKey(env('STRIPE_SECRET'));
+    $session = Session::retrieve($request->get('session_id'));
+
+    if ($session->payment_status === 'paid') {
+        $donationId = $session->metadata->donation_id;
+        $donation = Donation::find($donationId);
+
+        if ($donation && $donation->status !== 'confirmed') {
+            $donation->update(['status' => 'confirmed']);
+            DonationConfirmed::dispatch($donation);
+        }
+    }
+    
+    return redirect('/donations?status=success'); 
+}
+
+    public function cancel()
+    {
+        return response()->json(['success' => false, 'message' => 'Payment cancelled']);
+    }
     /**
      * Store a newly created donation
      */
@@ -69,7 +142,7 @@ class DonationController extends Controller
         $data = $request->validated();
 
         $data['receipt_number'] = $this->nextReceiptNumber();
-        $data['status'] = $data['status'] ?? 'confirmed';
+        $data['status'] = $data['payment_method'] === 'Stripe' ? 'pending' : ($data['status'] ?? 'confirmed');
 
         if ($request->boolean('gift_aid')) {
             $data['gift_aid_at'] = now();
@@ -91,10 +164,12 @@ class DonationController extends Controller
         }
 
         return response()->json([
-            'success' => true,
-            'message' => 'Donation processed successfully!',
-            'data'    => $donation->load(['donor', 'project', 'student', 'campaign']),
-        ], 201);
+        'success' => true,
+        'message' => $donation->status === 'pending' 
+            ? 'Donation created! Please complete payment via Stripe.' 
+            : 'Donation processed successfully!',
+        'data'    => $donation->load(['donor', 'project', 'student', 'campaign']),
+    ], 201);
     }
 
     /**
@@ -113,14 +188,6 @@ class DonationController extends Controller
         return 'REC-' . ($lastNumber + 1);
     }
 
-    /**
-     * Display the specified donation
-     */
-    // public function show($id)
-    // {
-    //     $donation = Donation::with(['donor', 'project', 'student'])->findOrFail($id);
-    //     return response()->json(['success' => true, 'data' => $donation], 200);
-    // }
 
     public function show(Donation $donation)
     {
@@ -130,25 +197,7 @@ class DonationController extends Controller
         return response()->json(['success' => true, 'data' => $donation], 200);
     }
 
-    /**
-     * Update the specified donation
-     */
-    // public function update(UpdateDonationRequest $request, Donation $donation)
-    // {
-    //     $donation = Donation::findOrFail($id);
-    //     $previousStatus = $donation->status;
-    //     $donation->update($request->validated());
-
-    //     if ($previousStatus !== 'confirmed' && $donation->status === 'confirmed') {
-    //         DonationConfirmed::dispatch($donation);
-    //     }
-
-    //     return response()->json([
-    //         'success' => true,
-    //         'message' => 'Donation tracking record updated!',
-    //         'data' => $donation->load(['donor', 'project', 'student'])
-    //     ], 200);
-    // }
+  
 
     public function update(UpdateDonationRequest $request, Donation $donation)
     {
@@ -166,19 +215,6 @@ class DonationController extends Controller
         ], 200);
     }
 
-    /**
-     * Remove the specified donation
-     */
-    // public function destroy($id)
-    // {
-    //     $donation = Donation::findOrFail($id);
-    //     $donation->delete();
-
-    //     return response()->json([
-    //         'success' => true,
-    //         'message' => 'Donation record deleted successfully!'
-    //     ], 200);
-    // }
 
     public function destroy(Donation $donation)
     {
@@ -193,7 +229,48 @@ class DonationController extends Controller
 
     public function getAuditLogs()
     {
-        // সর্বশেষ ৫০টি লগ রিটার্ন করবে
+        // return last 50 log
         return Activity::latest()->take(50)->get();
     }
+
+public function handleWebhook(Request $request)
+{
+    $payload = @file_get_contents('php://input');
+    $sig_header = $request->header('Stripe-Signature');
+    $endpoint_secret = env('STRIPE_WEBHOOK_SECRET');
+
+    try {
+        $event = \Stripe\Webhook::constructEvent($payload, $sig_header, $endpoint_secret);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Invalid payload'], 400);
+    }
+
+    // payment success
+    if ($event->type === 'checkout.session.completed') {
+        $session = $event->data->object;
+        $donation = \App\Models\Donation::where('stripe_session_id', $session->id)->first();
+        
+        if ($donation && $donation->status !== 'confirmed') {
+            $donation->update(['status' => 'confirmed']);
+            
+            // event fire
+            event(new DonationConfirmed($donation));
+        }
+    }
+
+    // fail payment
+    if ($event->type === 'checkout.session.expired' || $event->type === 'payment_intent.payment_failed') {
+        $session = $event->data->object;
+        $donation = \App\Models\Donation::where('stripe_session_id', $session->id)->first();
+        
+        if ($donation && $donation->status !== 'failed') {
+            $donation->update(['status' => 'failed']);
+            
+            // fail  event fire
+            event(new DonationFailed($donation));
+        }
+    }
+
+    return response()->json(['status' => 'success']);
+}
 }

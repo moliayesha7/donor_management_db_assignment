@@ -10,7 +10,7 @@ class UpdateEmailTemplateRequest extends FormRequest
 
     public function rules(): array
     {
-        // রাউটের আইডি রিড করে কারেন্ট টেমপ্লেটকে ইউনিক চেক থেকে এক্সক্লুড করবে
+        
         $id = $this->route('email_template'); 
 
         return [

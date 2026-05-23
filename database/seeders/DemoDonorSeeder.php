@@ -15,7 +15,7 @@ class DemoDonorSeeder extends Seeder
      */
     public function run(): void
     {
-        // ফরেন কি রিলেশনের জন্য ডাটা অবজেক্ট তুলে আনা
+       
         $user = User::first() ?? User::factory()->create();
         $project = Project::first(); 
         $websiteSource = DonorSource::where('name', 'Website')->first();

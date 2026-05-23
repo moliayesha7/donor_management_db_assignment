@@ -23,7 +23,7 @@ class SendDonationFailedNotification implements ShouldQueue
                 'recipient_email' => $donor->email,
                 'subject' => 'Donation Payment Failed Alert',
                 'status' => 'pending',
-                'sent_by' => 'System', // এই লাইনটি যোগ করুন
+                'sent_by' => 'System', 
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

@@ -21,10 +21,10 @@ class ProjectTypeController extends Controller
      */
     public function index(Request $request)
     {
-        // রিয়েল-টাইমে এই টাইপের অধীনে কয়টি প্রজেক্ট আছে তা কাউন্ট করার সুবিধা রাখা হলো
+        // real-time count of projects under this type
         $query = ProjectType::query()->withCount('projects');
 
-        // স্ক্রিনশটের রিকোয়ারমেন্ট অনুযায়ী name এবং description দুই ফিল্ডেই সার্চ করার সুবিধা
+        // search by name or description
         if ($search = $request->query('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
@@ -64,10 +64,10 @@ class ProjectTypeController extends Controller
      */
     public function store(StoreProjectTypeRequest $request)
     {
-        // ফর্ম রিকোয়েস্টের ভ্যালিডেটেড ডেটা সরাসরি ব্যবহার করে ডেসক্রিপশন ও স্ট্যাটাস সেভ করা হচ্ছে
+        // use the validated data from the form request to save the description and status
         $type = ProjectType::create([
             'name'        => $request->name,
-            'description' => $request->description, // স্ক্রিনশটের ডেসক্রিপশন ফিল্ড হ্যান্ডেল করার জন্য
+            'description' => $request->description, // for handling the description field in the screenshot
             'status'      => $request->status ?? 'active',
         ]);
 
@@ -113,7 +113,7 @@ class ProjectTypeController extends Controller
     {
         $type = ProjectType::findOrFail($id);
         
-        // আপনার রিকোয়েস্ট ক্লাসের ভ্যালিডেটেড ডেটা দিয়ে সেফলি আপডেট করা
+        // use the validated data from the form request to update the description and status
         $type->update($request->validated());
 
         return response()->json([

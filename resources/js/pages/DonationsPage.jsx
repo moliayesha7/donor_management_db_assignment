@@ -11,6 +11,7 @@ import {
     useGetDonationsQuery,
     useCreateDonationMutation,
     useUpdateDonationMutation,
+    useProcessStripeDonationMutation,
     useDeleteDonationMutation,
     useGetDonorsQuery,
     useGetProjectsQuery,
@@ -26,9 +27,9 @@ const STATUS_OPTIONS = [
 ];
 
 const FREQUENCY_OPTIONS = [
-    { value: 'weekly',  label: 'Weekly' },
+    { value: 'weekly', label: 'Weekly' },
     { value: 'monthly', label: 'Monthly' },
-    { value: 'yearly',  label: 'Yearly' },
+    { value: 'yearly', label: 'Yearly' },
 ];
 
 // Quick-pick chips → match by Campaign.name (case-insensitive). Seeded names: Zakat / Fitra / Sadaqah.
@@ -65,6 +66,7 @@ export default function DonationsPage() {
     const [createDonation, { isLoading: isCreating }] = useCreateDonationMutation();
     const [updateDonation, { isLoading: isUpdating }] = useUpdateDonationMutation();
     const [deleteDonation] = useDeleteDonationMutation();
+    const [processStripeDonation] = useProcessStripeDonationMutation();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editing, setEditing] = useState(null);
@@ -87,8 +89,8 @@ export default function DonationsPage() {
                 status: editing.status,
                 donation_type: editing.is_recurring ? 'recurring' : 'on-off',
                 recurrence_frequency: editing.recurrence_frequency || 'monthly',
-                recurrence_next_at:   editing.recurrence_next_at ? dayjs(editing.recurrence_next_at) : null,
-                recurrence_ends_at:   editing.recurrence_ends_at ? dayjs(editing.recurrence_ends_at) : null,
+                recurrence_next_at: editing.recurrence_next_at ? dayjs(editing.recurrence_next_at) : null,
+                recurrence_ends_at: editing.recurrence_ends_at ? dayjs(editing.recurrence_ends_at) : null,
             });
         } else {
             form.resetFields();
@@ -124,6 +126,21 @@ export default function DonationsPage() {
                 ? values.recurrence_ends_at.format('YYYY-MM-DD HH:mm:ss')
                 : null,
         };
+        console.log({payload})
+      if (values.payment_method === 'Stripe' && !isEditing) {
+        try {
+       
+            const response = await processStripeDonation(payload).unwrap();
+            
+            if (response.url) {
+                window.location.href = response.url;
+            }
+            return;
+        } catch (err) {
+            message.error(err?.data?.message || 'Failed to initiate Stripe payment');
+            return;
+        }
+    }
         try {
             if (isEditing) {
                 await updateDonation({ id: editing.id, ...payload }).unwrap();
@@ -336,128 +353,129 @@ export default function DonationsPage() {
                 )}
                 <Form form={form} layout="vertical" onFinish={handleFinish}>
                     <Row gutter={24}>
-                        {/* বাম দিকের কলাম */}
+                        {/*left side*/}
                         <Col span={16}>
-                          <div style={{ border: '1px solid #f0f0f0', borderRadius: '4px', padding: '16px', marginBottom: '16px' }}>
-                            <Row gutter={12}>
-                                <Col xs={24} sm={12}>
-                                    <Form.Item
-                                        name="donor_id"
-                                        label="Donor"
-                                        rules={[{ required: true, message: 'Please select donor' }]}
-                                    >
-                                        <Select
-                                            placeholder="Select donor"
-                                            loading={isDonorsLoading}
-                                            showSearch
-                                            optionFilterProp="label"
-                                            disabled={isEditing}
-                                            options={(donorsData?.data || []).map((d) => ({
-                                                value: d.id,
-                                                label: `${d.name} (${d.donor_id_code})`,
-                                            }))}
-                                        />
-                                    </Form.Item>
-                                </Col>
-                                <Col xs={24} sm={12}>
-                                    <Form.Item
-                                        name="project_id"
-                                        label="Project"
-                                        rules={[{ required: true, message: 'Please select project' }]}
-                                    >
-                                        <Select
-                                            placeholder="Select project"
-                                            loading={isProjectsLoading}
-                                            showSearch
-                                            optionFilterProp="label"
-                                            options={(projectsData?.data || []).map((p) => ({
-                                                value: p.id,
-                                                label: `${p.name} (${p.project_code})`,
-                                            }))}
-                                        />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
+                            <div style={{ border: '1px solid #f0f0f0', borderRadius: '4px', padding: '16px', marginBottom: '16px' }}>
+                                <Row gutter={12}>
+                                    <Col xs={24} sm={12}>
+                                        <Form.Item
+                                            name="donor_id"
+                                            label="Donor"
+                                            rules={[{ required: true, message: 'Please select donor' }]}
+                                        >
+                                            <Select
+                                                placeholder="Select donor"
+                                                loading={isDonorsLoading}
+                                                showSearch
+                                                optionFilterProp="label"
+                                                disabled={isEditing}
+                                                options={(donorsData?.data || []).map((d) => ({
+                                                    value: d.id,
+                                                    label: `${d.name} (${d.donor_id_code})`,
+                                                }))}
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col xs={24} sm={12}>
+                                        <Form.Item
+                                            name="project_id"
+                                            label="Project"
+                                            rules={[{ required: true, message: 'Please select project' }]}
+                                        >
+                                            <Select
+                                                placeholder="Select project"
+                                                loading={isProjectsLoading}
+                                                showSearch
+                                                optionFilterProp="label"
+                                                options={(projectsData?.data || []).map((p) => ({
+                                                    value: p.id,
+                                                    label: `${p.name} (${p.project_code})`,
+                                                }))}
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
 
-                            <Form.Item name="student_id" label="Link to Student (optional)">
-                                <Select
-                                    placeholder="Select student"
-                                    allowClear
-                                    loading={isStudentsLoading}
-                                    showSearch
-                                    optionFilterProp="label"
-                                    options={(studentsData?.data || []).map((s) => ({
-                                        value: s.id,
-                                        label: `${s.student_name} (${s.student_id})`,
-                                    }))}
-                                />
-                            </Form.Item>
+                                <Form.Item name="student_id" label="Link to Student (optional)">
+                                    <Select
+                                        placeholder="Select student"
+                                        allowClear
+                                        loading={isStudentsLoading}
+                                        showSearch
+                                        optionFilterProp="label"
+                                        options={(studentsData?.data || []).map((s) => ({
+                                            value: s.id,
+                                            label: `${s.student_name} (${s.student_id})`,
+                                        }))}
+                                    />
+                                </Form.Item>
 
-                            <Row gutter={12}>
-                                <Col xs={24} sm={12}>
-                                    <Form.Item
-                                        name="amount"
-                                        label="Amount"
-                                        rules={[{ required: true, message: 'Please enter amount' }]}
-                                    >
-                                        <InputNumber
-                                            min={1}
-                                            style={{ width: '100%' }}
-                                            prefix={<DollarOutlined />}
-                                            placeholder="0.00"
-                                        />
-                                    </Form.Item>
-                                </Col>
-                                <Col xs={24} sm={12}>
-                                    <Form.Item
-                                        name="payment_method"
-                                        label="Payment Method"
-                                        rules={[{ required: true, message: 'Please select method' }]}
-                                    >
-                                        <Select options={PAYMENT_METHODS} />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
+                                <Row gutter={12}>
+                                    <Col xs={24} sm={12}>
+                                        <Form.Item
+                                            name="amount"
+                                            label="Amount"
+                                            rules={[{ required: true, message: 'Please enter amount' }]}
+                                        >
+                                            <InputNumber
+                                                min={1}
+                                                style={{ width: '100%' }}
+                                                prefix={<DollarOutlined />}
+                                                placeholder="0.00"
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col xs={24} sm={12}>
+                                        <Form.Item
+                                            name="payment_method"
+                                            label="Payment Method"
+                                            rules={[{ required: true, message: 'Please select method' }]}
+                                        >
+                                            <Select options={PAYMENT_METHODS} />
+                                        </Form.Item>
+                                     
+                                    </Col>
+                                </Row>
 
-                            <Row gutter={12}>
-                                <Col xs={24} sm={12}>
-                                    <Form.Item
-                                        name="transaction_date"
-                                        label="Transaction Date"
-                                        rules={[{ required: true, message: 'Please select date' }]}
-                                    >
-                                        <DatePicker showTime style={{ width: '100%' }} />
-                                    </Form.Item>
-                                </Col>
-                                <Col xs={24} sm={12}>
-                                    <Form.Item name="status" label="Status">
-                                        <Select options={STATUS_OPTIONS} />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            {/* Gift Aid Section */}
-                            <Form.Item name="gift_aid" label="Gift Aid" valuePropName="checked">
-                                <Switch checkedChildren="Yes" unCheckedChildren="No" />
-                            </Form.Item>
-                            <p style={{ fontSize: '12px', color: '#888', marginTop: '-15px', marginBottom: '15px' }}>
-                                I am a UK taxpayer and I wish (Inspired By Islam) to reclaim tax back on all donations
-                                I have made within the last 6 years and all donations that I make hereafter. *
-                            </p>
+                                <Row gutter={12}>
+                                    <Col xs={24} sm={12}>
+                                        <Form.Item
+                                            name="transaction_date"
+                                            label="Transaction Date"
+                                            rules={[{ required: true, message: 'Please select date' }]}
+                                        >
+                                            <DatePicker showTime style={{ width: '100%' }} />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col xs={24} sm={12}>
+                                        <Form.Item name="status" label="Status">
+                                            <Select options={STATUS_OPTIONS} />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+                                {/* Gift Aid Section */}
+                                <Form.Item name="gift_aid" label="Gift Aid" valuePropName="checked">
+                                    <Switch checkedChildren="Yes" unCheckedChildren="No" />
+                                </Form.Item>
+                                <p style={{ fontSize: '12px', color: '#888', marginTop: '-15px', marginBottom: '15px' }}>
+                                    I am a UK taxpayer and I wish (Inspired By Islam) to reclaim tax back on all donations
+                                    I have made within the last 6 years and all donations that I make hereafter. *
+                                </p>
 
-                            {/* Consent Section */}
-                            <Form.Item name="consent_given" label="Consent" valuePropName="checked">
-                                <Switch checkedChildren="Yes" unCheckedChildren="No" />
-                            </Form.Item>
-                            <p style={{ fontSize: '12px', color: '#888', marginTop: '-15px', marginBottom: '15px' }}>
-                                Donor give consent for personal data to be used for future communication,
-                                but not to share with third party
-                            </p>
-                            <Form.Item style={{ textAlign: 'right', marginBottom: 0 }}>
-                                <Button onClick={closeModal} style={{ marginRight: 8 }}>Cancel</Button>
-                                <Button type="primary" htmlType="submit" loading={isCreating || isUpdating}>
-                                    {isEditing ? 'Update Donation' : 'Save Donation'}
-                                </Button>
-                            </Form.Item>
+                                {/* Consent Section */}
+                                <Form.Item name="consent_given" label="Consent" valuePropName="checked">
+                                    <Switch checkedChildren="Yes" unCheckedChildren="No" />
+                                </Form.Item>
+                                <p style={{ fontSize: '12px', color: '#888', marginTop: '-15px', marginBottom: '15px' }}>
+                                    Donor give consent for personal data to be used for future communication,
+                                    but not to share with third party
+                                </p>
+                                <Form.Item style={{ textAlign: 'right', marginBottom: 0 }}>
+                                    <Button onClick={closeModal} style={{ marginRight: 8 }}>Cancel</Button>
+                                    <Button type="primary" htmlType="submit" loading={isCreating || isUpdating}>
+                                        {isEditing ? 'Update Donation' : 'Save Donation'}
+                                    </Button>
+                                </Form.Item>
                             </div>
                         </Col>
 

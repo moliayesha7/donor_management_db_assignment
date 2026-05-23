@@ -19,10 +19,10 @@ class SendDonationThankYouWhatsapp implements ShouldQueue
 
     $template = WhatsappTemplate::where('is_default', true)->first();
 
-  // লিসেনারের handle মেথডের ভেতরে:
+  
 
     if ($template) {
-        // যদি টেমপ্লেট ডাটাবেজে থাকে
+      
         $parameters = [
             ['type' => 'text', 'text' => $donor->name],
             ['type' => 'text', 'text' => (string)$donation->amount],
@@ -32,7 +32,7 @@ class SendDonationThankYouWhatsapp implements ShouldQueue
 
         SendWhatsappMessageJob::dispatch($donor->phone_number, $template->name, $parameters, 'template');
     } else {
-        // যদি টেমপ্লেট না থাকে
+     
         $body = "Hello {$donor->name}, thank you for your donation of {$donation->amount} BDT.";
         
         SendWhatsappMessageJob::dispatch($donor->phone_number, $body, [], 'text');

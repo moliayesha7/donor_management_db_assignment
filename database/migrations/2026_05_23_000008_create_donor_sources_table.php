@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique(); // e.g., Website, Facebook
             $table->text('description')->nullable();
-            $table->boolean('is_active')->default(false); // Active No/Yes সুইচ
+            $table->boolean('is_active')->default(false); // Active No/Yes switch
             $table->timestamps();
         });
     }

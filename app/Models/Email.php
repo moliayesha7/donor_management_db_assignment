@@ -22,15 +22,13 @@ class Email extends Model
         'created_by'
     ];
 
-    // JSON ফিল্ডটিকে অটোমেটিক অ্যারেতে রূপান্তর করার কাস্টিং
+  
     protected $casts = [
         'selected_projects' => 'array',
         'scheduled_at' => 'datetime',
     ];
 
-    /**
-     * এই ইমেইলটি কোন ইউজার তৈরি করেছে তার রিলেশন
-     */
+  
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');

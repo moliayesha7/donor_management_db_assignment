@@ -60,3 +60,4 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 ngork run thakte hobe
 php artisan queue:work
+stripe listen --forward-to http://localhost:8000/api/stripe/webhook

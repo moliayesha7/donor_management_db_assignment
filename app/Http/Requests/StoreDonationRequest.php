@@ -19,7 +19,7 @@ class StoreDonationRequest extends FormRequest
             'student_id'           => 'nullable|exists:students,id',
             'campaign_id'          => 'nullable|exists:campaigns,id',
             'amount'               => 'required|numeric|min:1',
-            'payment_method'       => 'required|string|max:100',
+            'payment_method'       => 'required|string|max:255',
             'transaction_date'     => 'required|date',
             'gift_aid'             => 'required|boolean',
             'status'               => 'nullable|in:pending,confirmed,failed',

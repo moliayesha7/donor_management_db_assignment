@@ -14,7 +14,7 @@ class SendWhatsAppTemplateNotification
     {
         $eventClass = class_basename($event); // e.g., "DonorRegistered" or "DonationFailed"
         
-        // ১. ডাটাবেজ থেকে এই ইভেন্টের সাথে ম্যাপ করা হোয়াটসঅ্যাপ টেমপ্লেটটি খুঁজে বের করা
+        //use this event whats app template found from database
         $template = WhatsAppTemplate::where('trigger_event', $eventClass)
                                     ->where('status', 'approved')
                                     ->first();
@@ -27,7 +27,7 @@ class SendWhatsAppTemplateNotification
         $toPhoneNumber = '';
         $parameters = [];
 
-        // ২. ইভেন্ট অনুযায়ী ডাইনামিক ভেরিয়েবল (Parameters) প্রিপেয়ার করা
+        // dynamic variable prepare as per event
         if ($event instanceof DonorRegistered) {
             $donor = $event->donor;
             $toPhoneNumber = $donor->phone_number; // Number stored with leading + in the database (e.g., +8801813...)
@@ -70,10 +70,10 @@ class SendWhatsAppTemplateNotification
      */
     private function sendMetaTemplateMessage($to, $templateName, $languageCode, $parameters)
         {
-            // ১. এনভায়রনমেন্ট থেকে ফোন আইডি নেওয়া, না পেলে ব্যাকআপ আইডি ব্যবহার করা
+        
             $phoneId = env('WHATSAPP_PHONE_NUMBER_ID') ?: '1127356333791272'; 
             
-            // আপনার আগের আসল টোকেন ভ্যারিয়েবল (WHATSAPP_META_TOKEN) ফিক্স করা হলো
+         
             $accessToken = env('WHATSAPP_META_TOKEN'); 
             
             // URL setup
@@ -91,7 +91,7 @@ class SendWhatsAppTemplateNotification
                 'language' => [
                     'code' => $languageCode
                 ],
-                // এই লাইনটি খেয়াল করুন: hello_world এর জন্য components অ্যারেটি একদম খালি রাখতে হবে
+          
                'components' => [
                 [
                     'type' => 'body',

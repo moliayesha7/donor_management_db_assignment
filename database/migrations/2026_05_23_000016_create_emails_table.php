@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('emails', function (Blueprint $table) {
             $table->id();
             $table->text('recipients')->comment('Comma-separated email addresses');
-            $table->unsignedBigInteger('template_id')->nullable(); // টেমপ্লেট ড্রপডাউনের জন্য
+            $table->unsignedBigInteger('template_id')->nullable(); 
             $table->string('subject');
             $table->longText('body');
             $table->json('selected_projects')->nullable()->comment('Array of project IDs from tree select');

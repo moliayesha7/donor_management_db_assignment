@@ -33,7 +33,7 @@ const baseQueryWithAuth = async (args, api, extraOptions) => {
 export const apiSlice = createApi({
     reducerPath: 'api',
     baseQuery: baseQueryWithAuth,
-    tagTypes: ['Project', 'ProjectType', 'User', 'Role', 'Donor','DonorSource', 'Email', 'EmailSchedule', 'EmailLog', 'EmailTemplate','SmsTemplate','SmsSchedule','Student','Donation','Campaign','Expense','Report','Reconciliation','RecycleBin','ActivityLog', 'Me'],
+    tagTypes: ['Project', 'ProjectType', 'User', 'Role', 'Donor', 'DonorSource', 'Email', 'EmailSchedule', 'EmailLog', 'EmailTemplate', 'SmsTemplate', 'SmsSchedule', 'Student', 'Donation', 'Campaign', 'Expense', 'Report', 'Reconciliation', 'RecycleBin', 'ActivityLog', 'Me'],
     endpoints: (builder) => ({
         // ===== Auth =====
         login: builder.mutation({
@@ -56,9 +56,9 @@ export const apiSlice = createApi({
             providesTags: (result) =>
                 result?.data
                     ? [
-                          ...result.data.map(({ id }) => ({ type: 'Project', id })),
-                          { type: 'Project', id: 'LIST' },
-                      ]
+                        ...result.data.map(({ id }) => ({ type: 'Project', id })),
+                        { type: 'Project', id: 'LIST' },
+                    ]
                     : [{ type: 'Project', id: 'LIST' }],
         }),
         getProject: builder.query({
@@ -101,9 +101,9 @@ export const apiSlice = createApi({
             providesTags: (result) =>
                 result?.data
                     ? [
-                          ...result.data.map(({ id }) => ({ type: 'ProjectType', id })),
-                          { type: 'ProjectType', id: 'LIST' },
-                      ]
+                        ...result.data.map(({ id }) => ({ type: 'ProjectType', id })),
+                        { type: 'ProjectType', id: 'LIST' },
+                    ]
                     : [{ type: 'ProjectType', id: 'LIST' }],
         }),
         getProjectType: builder.query({
@@ -153,9 +153,9 @@ export const apiSlice = createApi({
             providesTags: (result) =>
                 result?.data
                     ? [
-                          ...result.data.map(({ id }) => ({ type: 'User', id })),
-                          { type: 'User', id: 'LIST' },
-                      ]
+                        ...result.data.map(({ id }) => ({ type: 'User', id })),
+                        { type: 'User', id: 'LIST' },
+                    ]
                     : [{ type: 'User', id: 'LIST' }],
         }),
         getUser: builder.query({
@@ -198,9 +198,9 @@ export const apiSlice = createApi({
             providesTags: (result) =>
                 result?.data
                     ? [
-                          ...result.data.map(({ id }) => ({ type: 'Donor', id })),
-                          { type: 'Donor', id: 'LIST' },
-                      ]
+                        ...result.data.map(({ id }) => ({ type: 'Donor', id })),
+                        { type: 'Donor', id: 'LIST' },
+                    ]
                     : [{ type: 'Donor', id: 'LIST' }],
         }),
         getDonor: builder.query({
@@ -242,9 +242,9 @@ export const apiSlice = createApi({
             providesTags: (result) =>
                 result?.data
                     ? [
-                          ...result.data.map(({ id }) => ({ type: 'DonorSource', id })),
-                          { type: 'DonorSource', id: 'LIST' },
-                      ]
+                        ...result.data.map(({ id }) => ({ type: 'DonorSource', id })),
+                        { type: 'DonorSource', id: 'LIST' },
+                    ]
                     : [{ type: 'DonorSource', id: 'LIST' }],
         }),
         getDonorSource: builder.query({
@@ -297,288 +297,308 @@ export const apiSlice = createApi({
             query: (id) => ({ url: `email-templates/${id}`, method: 'DELETE' }),
             invalidatesTags: ['EmailTemplate'],
         }),
-        // tagTypes এ যোগ করুন: 'SmsTemplate'
-            getSmsTemplates: builder.query({
-                query: (params) => ({ url: 'sms-templates', params }),
-                providesTags: ['SmsTemplate'],
+        
+        getSmsTemplates: builder.query({
+            query: (params) => ({ url: 'sms-templates', params }),
+            providesTags: ['SmsTemplate'],
+        }),
+        createSmsTemplate: builder.mutation({
+            query: (body) => ({ url: 'sms-templates', method: 'POST', body }),
+            invalidatesTags: ['SmsTemplate'],
+        }),
+        updateSmsTemplate: builder.mutation({
+            query: ({ id, ...body }) => ({ url: `sms-templates/${id}`, method: 'PUT', body }),
+            invalidatesTags: ['SmsTemplate'],
+        }),
+        deleteSmsTemplate: builder.mutation({
+            query: (id) => ({ url: `sms-templates/${id}`, method: 'DELETE' }),
+            invalidatesTags: ['SmsTemplate'],
+        }),
+        getSmsSchedules: builder.query({
+            query: (params) => ({ url: 'sms-schedules', params }),
+            providesTags: ['SmsTemplate'],
+        }),
+        getSmsLogs: builder.query({
+            query: (params) => ({ url: 'sms-logs', params }),
+            providesTags: ['SmsTemplate'],
+        }),
+  
+        getStudents: builder.query({
+            query: (params) => ({ url: 'students', params }),
+            providesTags: ['Student'],
+        }),
+        createStudent: builder.mutation({
+            query: (body) => ({ url: 'students', method: 'POST', body }),
+            invalidatesTags: ['Student'],
+        }),
+        updateStudent: builder.mutation({
+            query: ({ id, ...body }) => ({ url: `students/${id}`, method: 'PUT', body }),
+            invalidatesTags: ['Student'],
+        }),
+        deleteStudent: builder.mutation({
+            query: (id) => ({ url: `students/${id}`, method: 'DELETE' }),
+            invalidatesTags: ['Student'],
+        }),
+
+        // ===== Donations =====
+        getDonations: builder.query({
+            query: (params = {}) => ({ url: 'donations', params }),
+            providesTags: (result) =>
+                result?.data?.data 
+                    ? [
+                        ...result.data.data.map(({ id }) => ({ type: 'Donation', id })),
+                        { type: 'Donation', id: 'LIST' },
+                    ]
+                    : [{ type: 'Donation', id: 'LIST' }],
+        }),
+        createDonation: builder.mutation({
+            query: (body) => ({ url: 'donations', method: 'POST', body }),
+            invalidatesTags: [{ type: 'Donation', id: 'LIST' }],
+        }),
+        updateDonation: builder.mutation({
+            query: ({ id, ...body }) => ({ url: `donations/${id}`, method: 'PUT', body }),
+            invalidatesTags: (result, error, { id }) => [
+                { type: 'Donation', id },
+                { type: 'Donation', id: 'LIST' },
+            ],
+        }),
+        processStripeDonation: builder.mutation({
+            query: (payload) => ({
+                url: 'process-donation',
+                method: 'POST',
+                body: payload,
             }),
-            createSmsTemplate: builder.mutation({
-                query: (body) => ({ url: 'sms-templates', method: 'POST', body }),
-                invalidatesTags: ['SmsTemplate'],
+        }),
+        deleteDonation: builder.mutation({
+            query: (id) => ({ url: `donations/${id}`, method: 'DELETE' }),
+            invalidatesTags: (result, error, id) => [
+                { type: 'Donation', id },
+                { type: 'Donation', id: 'LIST' },
+            ],
+        }),
+
+        // ===== Activity / Audit Logs =====
+        getActivityLogs: builder.query({
+            query: (params = {}) => ({ url: 'activity-logs', params }),
+            providesTags: ['ActivityLog'],
+        }),
+
+        // ===== Campaigns =====
+        getCampaigns: builder.query({
+            query: (params = {}) => ({ url: 'campaigns', params }),
+            providesTags: ['Campaign'],
+        }),
+        getCampaign: builder.query({
+            query: (id) => `campaigns/${id}`,
+            providesTags: (r, e, id) => [{ type: 'Campaign', id }],
+        }),
+        createCampaign: builder.mutation({
+            query: (body) => ({ url: 'campaigns', method: 'POST', body }),
+            invalidatesTags: ['Campaign'],
+        }),
+        updateCampaign: builder.mutation({
+            query: ({ id, ...body }) => ({ url: `campaigns/${id}`, method: 'PUT', body }),
+            invalidatesTags: ['Campaign'],
+        }),
+        deleteCampaign: builder.mutation({
+            query: (id) => ({ url: `campaigns/${id}`, method: 'DELETE' }),
+            invalidatesTags: ['Campaign'],
+        }),
+
+        // ===== Expenses =====
+        getExpenses: builder.query({
+            query: (params = {}) => `expenses${buildQuery(params)}`,
+            providesTags: (result) =>
+                result?.data?.expenses
+                    ? [
+                        ...result.data.expenses.map(({ id }) => ({ type: 'Expense', id })),
+                        { type: 'Expense', id: 'LIST' },
+                    ]
+                    : [{ type: 'Expense', id: 'LIST' }],
+        }),
+        getExpense: builder.query({
+            query: (id) => `expenses/${id}`,
+            providesTags: (r, e, id) => [{ type: 'Expense', id }],
+        }),
+        createExpense: builder.mutation({
+            query: (body) => ({ url: 'expenses', method: 'POST', body }),
+            // Mutations on expenses change report numbers too — invalidate Report tag.
+            invalidatesTags: [
+                { type: 'Expense', id: 'LIST' },
+                { type: 'Report', id: 'PROJECT_WISE' },
+                { type: 'Report', id: 'DONATION_SUMMARY' },
+            ],
+        }),
+        updateExpense: builder.mutation({
+            query: ({ id, ...body }) => ({ url: `expenses/${id}`, method: 'PUT', body }),
+            invalidatesTags: (r, e, { id }) => [
+                { type: 'Expense', id },
+                { type: 'Expense', id: 'LIST' },
+                { type: 'Report', id: 'PROJECT_WISE' },
+            ],
+        }),
+        deleteExpense: builder.mutation({
+            query: (id) => ({ url: `expenses/${id}`, method: 'DELETE' }),
+            invalidatesTags: (r, e, id) => [
+                { type: 'Expense', id },
+                { type: 'Expense', id: 'LIST' },
+                { type: 'Report', id: 'PROJECT_WISE' },
+            ],
+        }),
+
+        // ===== Reports =====
+        getProjectWiseReport: builder.query({
+            query: (params = {}) => `reports/project-wise${buildQuery(params)}`,
+            providesTags: [{ type: 'Report', id: 'PROJECT_WISE' }],
+        }),
+        getProjectReportDetail: builder.query({
+            query: (id) => `reports/project/${id}/detail`,
+            providesTags: (r, e, id) => [{ type: 'Report', id: `PROJECT_${id}` }],
+        }),
+        getDonationSummary: builder.query({
+            query: (params = {}) => `reports/donation-summary${buildQuery(params)}`,
+            providesTags: [{ type: 'Report', id: 'DONATION_SUMMARY' }],
+        }),
+
+        // ===== Recycle Bin / Backup / Receipts =====
+        getRecycleBin: builder.query({
+            query: () => 'recycle-bin',
+            providesTags: [{ type: 'RecycleBin', id: 'INDEX' }],
+        }),
+        restoreRecycleBinItem: builder.mutation({
+            query: ({ type, id }) => ({ url: `recycle-bin/${type}/${id}/restore`, method: 'POST' }),
+            invalidatesTags: [
+                { type: 'RecycleBin', id: 'INDEX' },
+                { type: 'Donor', id: 'LIST' },
+                { type: 'Project', id: 'LIST' },
+                { type: 'Donation', id: 'LIST' },
+                { type: 'Expense', id: 'LIST' },
+            ],
+        }),
+        forceDeleteRecycleBinItem: builder.mutation({
+            query: ({ type, id }) => ({ url: `recycle-bin/${type}/${id}`, method: 'DELETE' }),
+            invalidatesTags: [{ type: 'RecycleBin', id: 'INDEX' }],
+        }),
+        emptyRecycleBin: builder.mutation({
+            query: () => ({ url: 'recycle-bin/empty', method: 'POST' }),
+            invalidatesTags: [{ type: 'RecycleBin', id: 'INDEX' }],
+        }),
+        getReceiptUrl: builder.query({
+            query: (donationId) => `donations/${donationId}/receipt-url`,
+        }),
+        getBackupUrl: builder.query({
+            query: () => 'backup/url',
+        }),
+
+        // ===== Notification logs (Email / SMS / WhatsApp) =====
+        getEmailLogs: builder.query({
+            query: (params = {}) => `email-logs${buildQuery(params)}`,
+            providesTags: [{ type: 'EmailLog', id: 'LIST' }],
+        }),
+        getWhatsappLogs: builder.query({
+            query: (params = {}) => `whatsapp/logs${buildQuery(params)}`,
+            providesTags: [{ type: 'EmailLog', id: 'WA_LIST' }],
+        }),
+        retryEmailLog: builder.mutation({
+            query: (id) => ({ url: `email-logs/${id}/retry`, method: 'POST' }),
+            invalidatesTags: [{ type: 'EmailLog', id: 'LIST' }],
+        }),
+        retrySmsLog: builder.mutation({
+            query: (id) => ({ url: `sms-logs/${id}/retry`, method: 'POST' }),
+            invalidatesTags: ['SmsTemplate'],
+        }),
+        retryWhatsappLog: builder.mutation({
+            query: (id) => ({ url: `whatsapp-logs/${id}/retry`, method: 'POST' }),
+            invalidatesTags: [{ type: 'EmailLog', id: 'WA_LIST' }],
+        }),
+
+        // ===== Financial Reports (Part 8) =====
+        getCashFlowReport: builder.query({
+            query: (params = {}) => `reports/cash-flow${buildQuery(params)}`,
+            providesTags: [{ type: 'Report', id: 'CASH_FLOW' }],
+        }),
+        getDonationLedger: builder.query({
+            query: (params = {}) => `reports/donation-ledger${buildQuery(params)}`,
+            providesTags: [{ type: 'Report', id: 'DONATION_LEDGER' }],
+        }),
+        getProjectBalanceReport: builder.query({
+            query: () => 'reports/project-balance',
+            providesTags: [{ type: 'Report', id: 'PROJECT_BALANCE' }],
+        }),
+        getFinancialReconciliationReport: builder.query({
+            query: () => 'reports/financial-reconciliation',
+            providesTags: [
+                { type: 'Report', id: 'FINANCIAL_RECON' },
+                { type: 'Reconciliation', id: 'LIST' },
+            ],
+        }),
+
+        // ===== Bank Reconciliation =====
+        getReconciliationUploads: builder.query({
+            query: () => 'reconciliation/uploads',
+            providesTags: (result) =>
+                result?.data?.uploads
+                    ? [
+                        ...result.data.uploads.map(({ id }) => ({ type: 'Reconciliation', id })),
+                        { type: 'Reconciliation', id: 'LIST' },
+                    ]
+                    : [{ type: 'Reconciliation', id: 'LIST' }],
+        }),
+        getReconciliationUpload: builder.query({
+            query: ({ id, match_status }) => {
+                const qs = match_status ? `?match_status=${match_status}` : '';
+                return `reconciliation/uploads/${id}${qs}`;
+            },
+            providesTags: (r, e, arg) => [{ type: 'Reconciliation', id: arg.id }],
+        }),
+        getReconciliationUnmatched: builder.query({
+            query: () => 'reconciliation/unmatched',
+            providesTags: [{ type: 'Reconciliation', id: 'UNMATCHED' }],
+        }),
+        uploadReconciliation: builder.mutation({
+            query: (formData) => ({
+                url: 'reconciliation/uploads',
+                method: 'POST',
+                body: formData,
+                // Let the browser set Content-Type with the multipart boundary.
+                formData: true,
             }),
-            updateSmsTemplate: builder.mutation({
-                query: ({ id, ...body }) => ({ url: `sms-templates/${id}`, method: 'PUT', body }),
-                invalidatesTags: ['SmsTemplate'],
+            invalidatesTags: [
+                { type: 'Reconciliation', id: 'LIST' },
+                { type: 'Reconciliation', id: 'UNMATCHED' },
+                { type: 'Report', id: 'FINANCIAL_RECON' },
+                { type: 'Report', id: 'PROJECT_WISE' },
+                { type: 'Report', id: 'CASH_FLOW' },
+                { type: 'Donation', id: 'LIST' },
+                { type: 'Donor', id: 'LIST' },
+            ],
+        }),
+        deleteReconciliationUpload: builder.mutation({
+            query: (id) => ({
+                url: `reconciliation/uploads/${id}`,
+                method: 'DELETE',
             }),
-            deleteSmsTemplate: builder.mutation({
-                query: (id) => ({ url: `sms-templates/${id}`, method: 'DELETE' }),
-                invalidatesTags: ['SmsTemplate'],
+            invalidatesTags: (r, e, id) => [
+                { type: 'Reconciliation', id },
+                { type: 'Reconciliation', id: 'LIST' },
+                { type: 'Reconciliation', id: 'UNMATCHED' },
+                { type: 'Report', id: 'FINANCIAL_RECON' },
+            ],
+        }),
+        matchReconciliationTransaction: builder.mutation({
+            query: ({ id, ...body }) => ({
+                url: `reconciliation/transactions/${id}/match`,
+                method: 'POST',
+                body,
             }),
-            getSmsSchedules: builder.query({
-                query: (params) => ({ url: 'sms-schedules', params }),
-                providesTags: ['SmsTemplate'],
-            }),
-            getSmsLogs: builder.query({
-                query: (params) => ({ url: 'sms-logs', params }),
-                providesTags: ['SmsTemplate'],
-            }),
-            // tagTypes এ 'Student' যোগ করে নিচের এন্ডপয়েন্টগুলো সেট করুন:
-getStudents: builder.query({
-    query: (params) => ({ url: 'students', params }),
-    providesTags: ['Student'],
-}),
-createStudent: builder.mutation({
-    query: (body) => ({ url: 'students', method: 'POST', body }),
-    invalidatesTags: ['Student'],
-}),
-updateStudent: builder.mutation({
-    query: ({ id, ...body }) => ({ url: `students/${id}`, method: 'PUT', body }),
-    invalidatesTags: ['Student'],
-}),
-deleteStudent: builder.mutation({
-    query: (id) => ({ url: `students/${id}`, method: 'DELETE' }),
-    invalidatesTags: ['Student'],
-}),
-// tagTypes অ্যারেতে 'Donation' যোগ করুন
-getDonations: builder.query({
-    query: (params) => ({ url: 'donations', params }),
-    providesTags: ['Donation'],
-}),
-createDonation: builder.mutation({
-    query: (body) => ({ url: 'donations', method: 'POST', body }),
-    invalidatesTags: ['Donation'],
-}),
-updateDonation: builder.mutation({
-    query: ({ id, ...body }) => ({ url: `donations/${id}`, method: 'PUT', body }),
-    invalidatesTags: ['Donation'],
-}),
-deleteDonation: builder.mutation({
-    query: (id) => ({ url: `donations/${id}`, method: 'DELETE' }),
-    invalidatesTags: ['Donation'],
-}),
-
-// ===== Activity / Audit Logs =====
-getActivityLogs: builder.query({
-    query: (params = {}) => ({ url: 'activity-logs', params }),
-    providesTags: ['ActivityLog'],
-}),
-
-// ===== Campaigns =====
-getCampaigns: builder.query({
-    query: (params = {}) => ({ url: 'campaigns', params }),
-    providesTags: ['Campaign'],
-}),
-getCampaign: builder.query({
-    query: (id) => `campaigns/${id}`,
-    providesTags: (r, e, id) => [{ type: 'Campaign', id }],
-}),
-createCampaign: builder.mutation({
-    query: (body) => ({ url: 'campaigns', method: 'POST', body }),
-    invalidatesTags: ['Campaign'],
-}),
-updateCampaign: builder.mutation({
-    query: ({ id, ...body }) => ({ url: `campaigns/${id}`, method: 'PUT', body }),
-    invalidatesTags: ['Campaign'],
-}),
-deleteCampaign: builder.mutation({
-    query: (id) => ({ url: `campaigns/${id}`, method: 'DELETE' }),
-    invalidatesTags: ['Campaign'],
-}),
-
-// ===== Expenses =====
-getExpenses: builder.query({
-    query: (params = {}) => `expenses${buildQuery(params)}`,
-    providesTags: (result) =>
-        result?.data?.expenses
-            ? [
-                  ...result.data.expenses.map(({ id }) => ({ type: 'Expense', id })),
-                  { type: 'Expense', id: 'LIST' },
-              ]
-            : [{ type: 'Expense', id: 'LIST' }],
-}),
-getExpense: builder.query({
-    query: (id) => `expenses/${id}`,
-    providesTags: (r, e, id) => [{ type: 'Expense', id }],
-}),
-createExpense: builder.mutation({
-    query: (body) => ({ url: 'expenses', method: 'POST', body }),
-    // Mutations on expenses change report numbers too — invalidate Report tag.
-    invalidatesTags: [
-        { type: 'Expense', id: 'LIST' },
-        { type: 'Report', id: 'PROJECT_WISE' },
-        { type: 'Report', id: 'DONATION_SUMMARY' },
-    ],
-}),
-updateExpense: builder.mutation({
-    query: ({ id, ...body }) => ({ url: `expenses/${id}`, method: 'PUT', body }),
-    invalidatesTags: (r, e, { id }) => [
-        { type: 'Expense', id },
-        { type: 'Expense', id: 'LIST' },
-        { type: 'Report', id: 'PROJECT_WISE' },
-    ],
-}),
-deleteExpense: builder.mutation({
-    query: (id) => ({ url: `expenses/${id}`, method: 'DELETE' }),
-    invalidatesTags: (r, e, id) => [
-        { type: 'Expense', id },
-        { type: 'Expense', id: 'LIST' },
-        { type: 'Report', id: 'PROJECT_WISE' },
-    ],
-}),
-
-// ===== Reports =====
-getProjectWiseReport: builder.query({
-    query: (params = {}) => `reports/project-wise${buildQuery(params)}`,
-    providesTags: [{ type: 'Report', id: 'PROJECT_WISE' }],
-}),
-getProjectReportDetail: builder.query({
-    query: (id) => `reports/project/${id}/detail`,
-    providesTags: (r, e, id) => [{ type: 'Report', id: `PROJECT_${id}` }],
-}),
-getDonationSummary: builder.query({
-    query: (params = {}) => `reports/donation-summary${buildQuery(params)}`,
-    providesTags: [{ type: 'Report', id: 'DONATION_SUMMARY' }],
-}),
-
-// ===== Recycle Bin / Backup / Receipts =====
-getRecycleBin: builder.query({
-    query: () => 'recycle-bin',
-    providesTags: [{ type: 'RecycleBin', id: 'INDEX' }],
-}),
-restoreRecycleBinItem: builder.mutation({
-    query: ({ type, id }) => ({ url: `recycle-bin/${type}/${id}/restore`, method: 'POST' }),
-    invalidatesTags: [
-        { type: 'RecycleBin', id: 'INDEX' },
-        { type: 'Donor', id: 'LIST' },
-        { type: 'Project', id: 'LIST' },
-        { type: 'Donation', id: 'LIST' },
-        { type: 'Expense', id: 'LIST' },
-    ],
-}),
-forceDeleteRecycleBinItem: builder.mutation({
-    query: ({ type, id }) => ({ url: `recycle-bin/${type}/${id}`, method: 'DELETE' }),
-    invalidatesTags: [{ type: 'RecycleBin', id: 'INDEX' }],
-}),
-emptyRecycleBin: builder.mutation({
-    query: () => ({ url: 'recycle-bin/empty', method: 'POST' }),
-    invalidatesTags: [{ type: 'RecycleBin', id: 'INDEX' }],
-}),
-getReceiptUrl: builder.query({
-    query: (donationId) => `donations/${donationId}/receipt-url`,
-}),
-getBackupUrl: builder.query({
-    query: () => 'backup/url',
-}),
-
-// ===== Notification logs (Email / SMS / WhatsApp) =====
-getEmailLogs: builder.query({
-    query: (params = {}) => `email-logs${buildQuery(params)}`,
-    providesTags: [{ type: 'EmailLog', id: 'LIST' }],
-}),
-getWhatsappLogs: builder.query({
-    query: (params = {}) => `whatsapp/logs${buildQuery(params)}`,
-    providesTags: [{ type: 'EmailLog', id: 'WA_LIST' }],
-}),
-retryEmailLog: builder.mutation({
-    query: (id) => ({ url: `email-logs/${id}/retry`, method: 'POST' }),
-    invalidatesTags: [{ type: 'EmailLog', id: 'LIST' }],
-}),
-retrySmsLog: builder.mutation({
-    query: (id) => ({ url: `sms-logs/${id}/retry`, method: 'POST' }),
-    invalidatesTags: ['SmsTemplate'],
-}),
-retryWhatsappLog: builder.mutation({
-    query: (id) => ({ url: `whatsapp-logs/${id}/retry`, method: 'POST' }),
-    invalidatesTags: [{ type: 'EmailLog', id: 'WA_LIST' }],
-}),
-
-// ===== Financial Reports (Part 8) =====
-getCashFlowReport: builder.query({
-    query: (params = {}) => `reports/cash-flow${buildQuery(params)}`,
-    providesTags: [{ type: 'Report', id: 'CASH_FLOW' }],
-}),
-getDonationLedger: builder.query({
-    query: (params = {}) => `reports/donation-ledger${buildQuery(params)}`,
-    providesTags: [{ type: 'Report', id: 'DONATION_LEDGER' }],
-}),
-getProjectBalanceReport: builder.query({
-    query: () => 'reports/project-balance',
-    providesTags: [{ type: 'Report', id: 'PROJECT_BALANCE' }],
-}),
-getFinancialReconciliationReport: builder.query({
-    query: () => 'reports/financial-reconciliation',
-    providesTags: [
-        { type: 'Report', id: 'FINANCIAL_RECON' },
-        { type: 'Reconciliation', id: 'LIST' },
-    ],
-}),
-
-// ===== Bank Reconciliation =====
-getReconciliationUploads: builder.query({
-    query: () => 'reconciliation/uploads',
-    providesTags: (result) =>
-        result?.data?.uploads
-            ? [
-                  ...result.data.uploads.map(({ id }) => ({ type: 'Reconciliation', id })),
-                  { type: 'Reconciliation', id: 'LIST' },
-              ]
-            : [{ type: 'Reconciliation', id: 'LIST' }],
-}),
-getReconciliationUpload: builder.query({
-    query: ({ id, match_status }) => {
-        const qs = match_status ? `?match_status=${match_status}` : '';
-        return `reconciliation/uploads/${id}${qs}`;
-    },
-    providesTags: (r, e, arg) => [{ type: 'Reconciliation', id: arg.id }],
-}),
-getReconciliationUnmatched: builder.query({
-    query: () => 'reconciliation/unmatched',
-    providesTags: [{ type: 'Reconciliation', id: 'UNMATCHED' }],
-}),
-uploadReconciliation: builder.mutation({
-    query: (formData) => ({
-        url: 'reconciliation/uploads',
-        method: 'POST',
-        body: formData,
-        // Let the browser set Content-Type with the multipart boundary.
-        formData: true,
+            invalidatesTags: [
+                { type: 'Reconciliation', id: 'LIST' },
+                { type: 'Reconciliation', id: 'UNMATCHED' },
+                { type: 'Report', id: 'FINANCIAL_RECON' },
+                { type: 'Donation', id: 'LIST' },
+            ],
+        }),
     }),
-    invalidatesTags: [
-        { type: 'Reconciliation', id: 'LIST' },
-        { type: 'Reconciliation', id: 'UNMATCHED' },
-        { type: 'Report', id: 'FINANCIAL_RECON' },
-        { type: 'Report', id: 'PROJECT_WISE' },
-        { type: 'Report', id: 'CASH_FLOW' },
-        { type: 'Donation', id: 'LIST' },
-        { type: 'Donor', id: 'LIST' },
-    ],
-}),
-deleteReconciliationUpload: builder.mutation({
-    query: (id) => ({
-        url: `reconciliation/uploads/${id}`,
-        method: 'DELETE',
-    }),
-    invalidatesTags: (r, e, id) => [
-        { type: 'Reconciliation', id },
-        { type: 'Reconciliation', id: 'LIST' },
-        { type: 'Reconciliation', id: 'UNMATCHED' },
-        { type: 'Report', id: 'FINANCIAL_RECON' },
-    ],
-}),
-matchReconciliationTransaction: builder.mutation({
-    query: ({ id, ...body }) => ({
-        url: `reconciliation/transactions/${id}/match`,
-        method: 'POST',
-        body,
-    }),
-    invalidatesTags: [
-        { type: 'Reconciliation', id: 'LIST' },
-        { type: 'Reconciliation', id: 'UNMATCHED' },
-        { type: 'Report', id: 'FINANCIAL_RECON' },
-        { type: 'Donation', id: 'LIST' },
-    ],
-}),
-            }),
 });
 
 export const {
@@ -614,23 +634,24 @@ export const {
     useCreateDonorSourceMutation,
     useUpdateDonorSourceMutation,
     useDeleteDonorSourceMutation,
-    useGetEmailTemplatesQuery, 
-    useCreateEmailTemplateMutation, 
-    useUpdateEmailTemplateMutation, 
+    useGetEmailTemplatesQuery,
+    useCreateEmailTemplateMutation,
+    useUpdateEmailTemplateMutation,
     useDeleteEmailTemplateMutation,
-    useGetSmsTemplatesQuery, 
-    useCreateSmsTemplateMutation, 
-    useUpdateSmsTemplateMutation, 
+    useGetSmsTemplatesQuery,
+    useCreateSmsTemplateMutation,
+    useUpdateSmsTemplateMutation,
     useDeleteSmsTemplateMutation,
-    useGetSmsSchedulesQuery, 
+    useGetSmsSchedulesQuery,
     useGetSmsLogsQuery,
-    useGetStudentsQuery, 
-    useCreateStudentMutation, 
-    useUpdateStudentMutation, 
+    useGetStudentsQuery,
+    useCreateStudentMutation,
+    useUpdateStudentMutation,
     useDeleteStudentMutation,
     useGetDonationsQuery,
     useCreateDonationMutation,
     useUpdateDonationMutation,
+    useProcessStripeDonationMutation,
     useDeleteDonationMutation,
     useGetCampaignsQuery,
     useGetCampaignQuery,

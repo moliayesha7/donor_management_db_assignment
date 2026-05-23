@@ -18,22 +18,22 @@ class StudentController extends Controller
 {
     $query = Student::query()->withCount('donations');
 
-    // ১. গ্লোবাল সার্চ ফিল্টার (যদি ফ্রন্টএন্ড থেকে একটি সিঙ্গেল ইনপুট দিয়ে সব খোঁজা হয়)
+    // global search filter (if a single input is provided for searching all fields)
     if ($search = $request->query('search')) {
         $query->where(function ($q) use ($search) {
-            $q->where('student_name', 'like', "%{$search}%") // 'name' এর বদলে 'student_name'
-              ->orWhere('student_id', 'like', "%{$search}%") // 'student_id' এর বদলে 'student_id'
+            $q->where('student_name', 'like', "%{$search}%") 
+              ->orWhere('student_id', 'like', "%{$search}%") 
               ->orWhere('post_code', 'like', "%{$search}%");
         });
     }
 
-    // ২. স্পেসিফিক ফিল্টার (আলাদা আলাদা ইনপুট ফিল্ডের জন্য)
+    // specific filter (for separate input fields)
     if ($studentName = $request->query('student_name')) {
         $query->where('student_name', 'like', "%{$studentName}%");
     }
 
     if ($studentId = $request->query('student_id')) {
-        $query->where('student_id', 'like', "%{$studentId}%"); // এখানে 'student_id' এর বদলে 'student_id' দিয়ে ফিক্স করা হয়েছে
+        $query->where('student_id', 'like', "%{$studentId}%"); 
     }
 
     if ($postCode = $request->query('post_code')) {

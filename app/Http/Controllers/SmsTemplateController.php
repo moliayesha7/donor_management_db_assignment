@@ -129,7 +129,7 @@ public function getLogs(Request $request)
             'error_message'
         );
 
-    // সার্চ ফিল্টার (মেসেজ কন্টেন্ট বা ফোন নম্বর দিয়ে খোঁজার জন্য)
+    // search filter (for searching by message content or phone number)
     if ($search = $request->query('search')) {
         $query->where('text', 'like', "%{$search}%")
               ->orWhere('recipient_number', 'like', "%{$search}%")

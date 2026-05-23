@@ -19,7 +19,7 @@ class Donation extends Model
         'payment_method', 'transaction_date', 'receipt_number',
         'gift_aid', 'gift_aid_at', 'consent_given', 'consent_at', 'status',
         'is_recurring', 'recurrence_frequency', 'recurrence_next_at',
-        'recurrence_ends_at', 'recurrence_parent_id',
+        'recurrence_ends_at', 'recurrence_parent_id','stripe_session_id'
     ];
 
     protected $casts = [
@@ -69,7 +69,7 @@ class Donation extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['donor_id', 'amount', 'status']) // যে ফিল্ডগুলো ট্র্যাক করতে চান
-            ->logAll(); // শুধু পরিবর্তিত ভ্যালু লগ করবে
+            ->logOnly(['donor_id', 'amount', 'status'])
+            ->logAll(); // only log the specified fields, not all
     }
 }

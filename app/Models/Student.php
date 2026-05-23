@@ -14,7 +14,7 @@ class Student extends Model
         'educational_level', 'institution_name', 'funding_status','created_by'
     ];
 
-    // এই স্টুডেন্ট কোন কোন ডোনার থেকে ফান্ড পেয়েছে তা ট্র্যাক করতে
+
     public function donations()
     {
         return $this->hasMany(Donation::class);

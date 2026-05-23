@@ -47,7 +47,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
 
-        // ৩. হোয়াটসঅ্যাপ অটো-নোটিফিকেশনের জন্য ইভেন্ট এবং লিসেনার রেজিস্টার (boot মেথডের ভেতরে)
+  
         Event::listen(DonorRegistered::class, SendWhatsAppTemplateNotification::class);
         Event::listen(DonationFailed::class, SendWhatsAppTemplateNotification::class);
     }

@@ -21,7 +21,7 @@ class EmailController extends Controller
     {
         $query = Email::query()->with('creator:id,name');
 
-        // সার্চ ফিল্টার (Subject বা Recipients দিয়ে সার্চ করার জন্য)
+    
         if ($search = $request->query('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('subject', 'like', "%{$search}%")
@@ -82,11 +82,11 @@ class EmailController extends Controller
             'selected_projects' => $request->selected_projects,
             'send_timing'       => $request->send_timing,
             'scheduled_at'      => $request->scheduled_at,
-            'status'            => $request->send_timing === 'Now' ? 'pending' : 'draft', // 'Now' হলে মেইলার কিউতে যাবে
-            'created_by'        => auth()->id() ?? 1, // টেস্টিং এর সুবিধার্থে ওয়ান-টাইম ফলব্যাক ১ রাখা হলো
+            'status'            => $request->send_timing === 'Now' ? 'pending' : 'draft', // if 'Now' then go to mailer queue
+            'created_by'        => auth()->id() ?? 1, // for testing purposes only
         ]);
 
-        // 💡 মেইল কিউ প্রোসেস করার জন্য এখানে Job ডিসপ্যাচ করা যেতে পারে:
+        // 💡 to process the email queue, dispatch a job here:
         // if ($email->send_timing === 'Now') { dispatch(new SendBulkEmailJob($email)); }
 
         $dispatched = 0;
@@ -145,7 +145,7 @@ class EmailController extends Controller
     {
         $email = Email::findOrFail($id);
 
-        // যদি অলরেডি মেইল পাঠানো হয়ে যায়, তবে রি-এডিট ব্লক করা ভালো
+        //if already sent, block re-editing
         if ($email->status === 'sent') {
             return response()->json(['success' => false, 'message' => 'Cannot modify an already sent email.'], 400);
         }
@@ -200,11 +200,11 @@ class EmailController extends Controller
  */
 public function getSchedules(Request $request)
 {
-    // স্ক্রিনশটের গ্রিডের মতো ডেটা তুলে আনা
+    
     $schedules = \DB::table('email_schedules')
         ->select('created_at', 'subject', 'deadline', 'status', 'started_at', 'completed_at')
         ->orderBy('created_at', 'desc')
-        ->paginate($request->query('per_page', 10)); // ডিফল্ট ১০টি এন্ট্রি
+        ->paginate($request->query('per_page', 10)); // default 10 entries
 
     return response()->json([
         'success' => true,
@@ -221,7 +221,7 @@ public function getSchedules(Request $request)
  */
 public function getLogs(Request $request)
 {
-    // স্ক্রিনশটের ডেটা গ্রিডের মতো (Date/Time, Subject, Sent By, Recipient Name/Email)
+    // data grid like screenshot (Date/Time, Subject, Sent By, Recipient Name/Email)
     $query = \DB::table('email_logs')
         ->select(
             'id',

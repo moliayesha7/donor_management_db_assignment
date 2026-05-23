@@ -18,23 +18,23 @@ class SendWelcomeNotification implements ShouldQueue
         $donor = $event->donor;
 
         try {
-            // ডাটাবেজে পেন্ডিং লগ তৈরি
+           
             $logId = DB::table('email_logs')->insertGetId([
                 'recipient_email' => $donor->email,
                 'subject' => 'Welcome to Our Donor Community!',
                 'status' => 'pending',
-                'sent_by' => 'System', // এই লাইনটি যোগ করুন
+                'sent_by' => 'System', 
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
 
-            // মেইল ফায়ার (Queue-এর মাধ্যমে যাবে)
+            // Mail fire queue 
             Mail::raw("Hello {$donor->name},\n\nThank you for registering as a donor. Your contribution can save lives!", function ($message) use ($donor) {
                 $message->to($donor->email)
                         ->subject('Welcome to Our Donor Community!');
             });
 
-            // সাকসেস হলে স্ট্যাটাস আপডেট
+            // status update if success
             DB::table('email_logs')->where('id', $logId)->update([
                 'status' => 'sent',
                 'updated_at' => now()

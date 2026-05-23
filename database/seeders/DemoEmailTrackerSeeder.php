@@ -10,7 +10,7 @@ class DemoEmailTrackerSeeder extends Seeder
 {
     public function run(): void
     {
-        // ১. ডামি শিডিউল ডাটা ইনসার্ট (স্ক্রিনশটের সাথে এলাইন্ড)
+      
         $schedules = [
             [
                 'id' => 1,
@@ -52,7 +52,7 @@ class DemoEmailTrackerSeeder extends Seeder
 
         DB::table('email_schedules')->insert($schedules);
 
-        // ২. ডামি ইন্ডিভিজুয়াল লগ ডাটা ইনসার্ট (স্ক্রিনশটের ব্রেকডাউন অনুযায়ী)
+      
         $logs = [
             [
                 'schedule_id' => 1,

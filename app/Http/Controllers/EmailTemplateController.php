@@ -16,7 +16,7 @@ class EmailTemplateController extends Controller
     {
         $query = EmailTemplate::query();
 
-        // লাইভ সার্চ ফিল্টার
+        // live search filter by name or description
         if ($search = $request->query('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
@@ -37,7 +37,7 @@ class EmailTemplateController extends Controller
      */
     public function store(StoreEmailTemplateRequest $request)
     {
-        // যদি কারেন্ট টেমপ্লেট ডিফল্ট সেট হয়, তবে বাকিদের ডিফল্ট ফ্ল্যাগ রিসেট হবে
+        // if the current template is set as default, reset the default flag for others
         if ($request->is_default) {
             EmailTemplate::where('is_default', true)->update(['is_default' => false]);
         }
@@ -71,7 +71,7 @@ class EmailTemplateController extends Controller
     {
         $template = EmailTemplate::findOrFail($id);
 
-        // যদি এই টেমপ্লেটটিকে ডিফল্ট বানানো হয়, বাকিগুলোর ডিফল্ট ফ্ল্যাগ বাতিল হবে
+        // if the current template is set as default, reset the default flag for others
         if ($request->is_default) {
             EmailTemplate::where('id', '!=', $id)->where('is_default', true)->update(['is_default' => false]);
         }
