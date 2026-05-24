@@ -91,7 +91,7 @@ export default function ProjectsPage() {
             title: 'Budget',
             dataIndex: 'budget',
             key: 'budget',
-            render: (amount) => `${Number(amount).toLocaleString()} BDT`,
+            render: (amount) => `${Number(amount).toLocaleString()} POUND`,
         },
         {
             title: 'Status',
@@ -225,7 +225,7 @@ export default function ProjectsPage() {
 
                     <Form.Item
                         name="budget"
-                        label="Budget (BDT)"
+                        label="Budget (POUND)"
                         rules={[{ required: true, message: 'Please enter budget' }]}
                     >
                         <InputNumber min={0} style={{ width: '100%' }} placeholder="Amount" />

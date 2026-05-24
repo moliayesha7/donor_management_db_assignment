@@ -33,7 +33,7 @@ class SendDonationThankYouWhatsapp implements ShouldQueue
         SendWhatsappMessageJob::dispatch($donor->phone_number, $template->name, $parameters, 'template');
     } else {
      
-        $body = "Hello {$donor->name}, thank you for your donation of {$donation->amount} BDT.";
+        $body = "Hello {$donor->name}, thank you for your donation of {$donation->amount} POUND.";
         
         SendWhatsappMessageJob::dispatch($donor->phone_number, $body, [], 'text');
     }

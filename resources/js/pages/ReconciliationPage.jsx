@@ -33,7 +33,7 @@ const MATCH_COLORS = {
     error: 'red',
 };
 
-const formatBdt = (n) => `${Number(n || 0).toLocaleString()} BDT`;
+const formatBdt = (n) => `${Number(n || 0).toLocaleString()} POUND`;
 
 /**
  * Hits the authenticated /reconciliation/template endpoint with the bearer token
@@ -343,7 +343,7 @@ function UnmatchedTab() {
                     <Card><Statistic title="Unmatched" value={totals?.count || 0} prefix={<WarningOutlined />} valueStyle={{ color: '#cf1322' }} /></Card>
                 </Col>
                 <Col xs={12} md={8}>
-                    <Card><Statistic title="Total Amount" value={totals?.amount || 0} suffix="BDT" /></Card>
+                    <Card><Statistic title="Total Amount" value={totals?.amount || 0} suffix="POUND" /></Card>
                 </Col>
             </Row>
 
@@ -453,7 +453,7 @@ function UploadDetailDrawer({ uploadId, open, onClose }) {
                         <Col xs={12} md={6}><Card size="small"><Statistic title="Total rows" value={upload.total_rows} /></Card></Col>
                         <Col xs={12} md={6}><Card size="small"><Statistic title="Matched" value={upload.matched_rows} valueStyle={{ color: '#3f8600' }} /></Card></Col>
                         <Col xs={12} md={6}><Card size="small"><Statistic title="Unmatched" value={upload.unmatched_rows} valueStyle={{ color: '#cf1322' }} /></Card></Col>
-                        <Col xs={12} md={6}><Card size="small"><Statistic title="Total amount" value={Number(upload.total_amount || 0)} suffix="BDT" /></Card></Col>
+                        <Col xs={12} md={6}><Card size="small"><Statistic title="Total amount" value={Number(upload.total_amount || 0)} suffix="POUND" /></Card></Col>
                     </Row>
 
                     <Space style={{ marginBottom: 12 }} wrap>

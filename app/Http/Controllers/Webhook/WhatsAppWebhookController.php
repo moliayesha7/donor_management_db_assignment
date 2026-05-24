@@ -54,7 +54,7 @@ class WhatsAppWebhookController extends Controller
 
                 if ($lastDonation) {
                     $statusEmoji = $lastDonation->status === 'success' ? '✅ Success' : '⏳ Pending';
-                    $replyText = "আপনার প্রোফাইল পাওয়া গেছে, *{$donor->name}*! 😊\n\n📍 *সর্বশেষ ডোনেশন বিবরণ:*\n• পরিমাণ: {$lastDonation->amount} BDT\n• মাধ্যম: {$lastDonation->payment_method}\n• স্ট্যাটাস: {$statusEmoji}";
+                    $replyText = "আপনার প্রোফাইল পাওয়া গেছে, *{$donor->name}*! 😊\n\n📍 *সর্বশেষ ডোনেশন বিবরণ:*\n• পরিমাণ: {$lastDonation->amount} POUND\n• মাধ্যম: {$lastDonation->payment_method}\n• স্ট্যাটাস: {$statusEmoji}";
                 } else {
                     $replyText = "ধন্যবাদ *{$donor->name}*। আমাদের ডাটাবেজে আপনার প্রোফাইল আছে, তবে কোনো ডোনেশনের রেকর্ড পাওয়া যায়নি।";
                 }

@@ -29,7 +29,7 @@ class SendDonationFailedNotification implements ShouldQueue
             ]);
 
             $mailContent = "Hello {$donor->name},\n\n"
-                         . "We noticed that your recent donation attempt of {$donation->amount} BDT has failed.\n"
+                         . "We noticed that your recent donation attempt of {$donation->amount} POUND has failed.\n"
                          . "Reference Number: {$donation->receipt_number}\n\n"
                          . "If this was unexpected, please try again or contact your payment provider.\n\n"
                          . "Thank you for your intent to support us.";

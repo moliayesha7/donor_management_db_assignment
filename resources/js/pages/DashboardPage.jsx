@@ -17,7 +17,7 @@ import { usePermissions } from '../utils/permissions.js';
 const { Text } = Typography;
 
 const STATUS_COLORS = { pending: 'gold', active: 'green', completed: 'blue', suspended: 'red' };
-const formatBdt = (n) => `${Number(n || 0).toLocaleString()} BDT`;
+const formatBdt = (n) => `${Number(n || 0).toLocaleString()} POUND`;
 
 export default function DashboardPage() {
     const { user, can } = usePermissions();
@@ -50,16 +50,16 @@ export default function DashboardPage() {
 
             <Row gutter={[16, 16]}>
                 <Col xs={12} md={6}>
-                    <Card><Statistic title="Total Donations" value={dsTotals?.donations_total || 0} suffix="BDT" prefix={<DollarOutlined />} valueStyle={{ color: '#3f8600' }} /></Card>
+                    <Card><Statistic title="Total Donations" value={dsTotals?.donations_total || 0} suffix="POUND" prefix={<DollarOutlined />} valueStyle={{ color: '#3f8600' }} /></Card>
                 </Col>
                 <Col xs={12} md={6}>
-                    <Card><Statistic title="Total Expenses" value={pwTotals?.expenses_total || 0} suffix="BDT" prefix={<WalletOutlined />} valueStyle={{ color: '#cf1322' }} /></Card>
+                    <Card><Statistic title="Total Expenses" value={pwTotals?.expenses_total || 0} suffix="POUND" prefix={<WalletOutlined />} valueStyle={{ color: '#cf1322' }} /></Card>
                 </Col>
                 <Col xs={12} md={6}>
-                    <Card><Statistic title="Cash on Hand" value={cfTotals?.closing_balance ?? ((dsTotals?.donations_total || 0) - (pwTotals?.expenses_total || 0))} suffix="BDT" prefix={<BankOutlined />} valueStyle={{ color: (cfTotals?.closing_balance || 0) < 0 ? '#cf1322' : '#3f8600' }} /></Card>
+                    <Card><Statistic title="Cash on Hand" value={cfTotals?.closing_balance ?? ((dsTotals?.donations_total || 0) - (pwTotals?.expenses_total || 0))} suffix="POUND" prefix={<BankOutlined />} valueStyle={{ color: (cfTotals?.closing_balance || 0) < 0 ? '#cf1322' : '#3f8600' }} /></Card>
                 </Col>
                 <Col xs={12} md={6}>
-                    <Card><Statistic title="Budget Allocated" value={pwTotals?.budget_total || 0} suffix="BDT" prefix={<ProjectOutlined />} /></Card>
+                    <Card><Statistic title="Budget Allocated" value={pwTotals?.budget_total || 0} suffix="POUND" prefix={<ProjectOutlined />} /></Card>
                 </Col>
             </Row>
 

@@ -21,7 +21,7 @@ import { usePermissions } from '../utils/permissions.js';
 
 const { Text } = Typography;
 
-const formatBdt = (n) => `${Number(n || 0).toLocaleString()} BDT`;
+const formatBdt = (n) => `${Number(n || 0).toLocaleString()} POUND`;
 
 const COUNTRY_OPTIONS = [
     { value: 'United Kingdom', label: 'United Kingdom' },

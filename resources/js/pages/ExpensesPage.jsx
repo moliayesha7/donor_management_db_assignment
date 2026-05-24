@@ -42,7 +42,7 @@ const STATUS_COLORS = {
     paid: 'green',
 };
 
-const formatBdt = (n) => `${Number(n || 0).toLocaleString()} BDT`;
+const formatBdt = (n) => `${Number(n || 0).toLocaleString()} POUND`;
 
 export default function ExpensesPage() {
     const { can } = usePermissions();
@@ -214,7 +214,7 @@ export default function ExpensesPage() {
             <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
                 <Col xs={12} md={8}>
                     <Card size="small">
-                        <Statistic title="Total Spent (filtered)" value={totals?.amount || 0} suffix="BDT" valueStyle={{ color: '#cf1322' }} prefix={<DollarOutlined />} />
+                        <Statistic title="Total Spent (filtered)" value={totals?.amount || 0} suffix="POUND" valueStyle={{ color: '#cf1322' }} prefix={<DollarOutlined />} />
                     </Card>
                 </Col>
                 <Col xs={12} md={8}>
@@ -322,7 +322,7 @@ export default function ExpensesPage() {
                         <Col xs={24} sm={12}>
                             <Form.Item
                                 name="amount"
-                                label="Amount (BDT)"
+                                label="Amount (POUND)"
                                 rules={[{ required: true, message: 'Please enter amount' }]}
                             >
                                 <InputNumber min={0.01} step={100} style={{ width: '100%' }} placeholder="0.00" />

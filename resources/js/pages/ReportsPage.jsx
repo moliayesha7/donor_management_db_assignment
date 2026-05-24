@@ -30,7 +30,7 @@ const STATUS_COLORS = {
     suspended: 'red',
 };
 
-const formatBdt = (n) => `${Number(n || 0).toLocaleString()} BDT`;
+const formatBdt = (n) => `${Number(n || 0).toLocaleString()} POUND`;
 
 /** Tiny CSV exporter — handles values containing commas/quotes/newlines. */
 const downloadCsv = (filename, rows) => {
@@ -75,16 +75,16 @@ function ProjectWiseTab({ onOpenDetail }) {
                     <Card><Statistic title="Projects" value={totals?.project_count || 0} prefix={<ProjectOutlined />} /></Card>
                 </Col>
                 <Col xs={12} md={5}>
-                    <Card><Statistic title="Budget Total" value={totals?.budget_total || 0} suffix="BDT" /></Card>
+                    <Card><Statistic title="Budget Total" value={totals?.budget_total || 0} suffix="POUND" /></Card>
                 </Col>
                 <Col xs={12} md={5}>
-                    <Card><Statistic title="Donations Raised" value={totals?.donations_total || 0} suffix="BDT" valueStyle={{ color: '#3f8600' }} /></Card>
+                    <Card><Statistic title="Donations Raised" value={totals?.donations_total || 0} suffix="POUND" valueStyle={{ color: '#3f8600' }} /></Card>
                 </Col>
                 <Col xs={12} md={5}>
-                    <Card><Statistic title="Expenses Total" value={totals?.expenses_total || 0} suffix="BDT" valueStyle={{ color: '#cf1322' }} /></Card>
+                    <Card><Statistic title="Expenses Total" value={totals?.expenses_total || 0} suffix="POUND" valueStyle={{ color: '#cf1322' }} /></Card>
                 </Col>
                 <Col xs={12} md={5}>
-                    <Card><Statistic title="Budget Remaining" value={totals?.remaining_total || 0} suffix="BDT" valueStyle={{ color: (totals?.remaining_total || 0) < 0 ? '#cf1322' : undefined }} /></Card>
+                    <Card><Statistic title="Budget Remaining" value={totals?.remaining_total || 0} suffix="POUND" valueStyle={{ color: (totals?.remaining_total || 0) < 0 ? '#cf1322' : undefined }} /></Card>
                 </Col>
             </Row>
 
@@ -296,10 +296,10 @@ function ProjectDetailTab({ projectId, onProjectChange }) {
                             </Col>
                             <Col xs={24} md={12}>
                                 <Row gutter={8}>
-                                    <Col span={8}><Statistic title="Budget" value={detail.project.budget} suffix="BDT" /></Col>
-                                    <Col span={8}><Statistic title="Raised" value={detail.summary.donations_total} suffix="BDT" valueStyle={{ color: '#3f8600' }} /></Col>
-                                    <Col span={8}><Statistic title="Expenses" value={detail.summary.expenses_total} suffix="BDT" valueStyle={{ color: '#cf1322' }} /></Col>
-                                    <Col span={8}><Statistic title="Remaining" value={detail.summary.remaining} suffix="BDT" valueStyle={{ color: detail.summary.remaining < 0 ? '#cf1322' : undefined }} /></Col>
+                                    <Col span={8}><Statistic title="Budget" value={detail.project.budget} suffix="POUND" /></Col>
+                                    <Col span={8}><Statistic title="Raised" value={detail.summary.donations_total} suffix="POUND" valueStyle={{ color: '#3f8600' }} /></Col>
+                                    <Col span={8}><Statistic title="Expenses" value={detail.summary.expenses_total} suffix="POUND" valueStyle={{ color: '#cf1322' }} /></Col>
+                                    <Col span={8}><Statistic title="Remaining" value={detail.summary.remaining} suffix="POUND" valueStyle={{ color: detail.summary.remaining < 0 ? '#cf1322' : undefined }} /></Col>
                                     <Col span={8}><Statistic title="Funded %" value={detail.summary.funded_percent} suffix="%" /></Col>
                                     <Col span={8}><Statistic title="Spent %" value={detail.summary.spent_percent} suffix="%" /></Col>
                                 </Row>
@@ -447,7 +447,7 @@ function DonationSummaryTab() {
         <>
             <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
                 <Col xs={12} md={8}>
-                    <Card><Statistic title="Total Donations" value={d?.totals?.donations_total || 0} suffix="BDT" valueStyle={{ color: '#3f8600' }} /></Card>
+                    <Card><Statistic title="Total Donations" value={d?.totals?.donations_total || 0} suffix="POUND" valueStyle={{ color: '#3f8600' }} /></Card>
                 </Col>
                 <Col xs={12} md={8}>
                     <Card><Statistic title="Donation Count" value={d?.totals?.donation_count || 0} /></Card>
@@ -551,7 +551,7 @@ function DonationSummaryTab() {
                                         <Statistic
                                             title={<Tag color={s.status === 'confirmed' ? 'green' : s.status === 'failed' ? 'red' : 'gold'}>{s.status}</Tag>}
                                             value={s.total_amount}
-                                            suffix="BDT"
+                                            suffix="POUND"
                                         />
                                         <Text type="secondary">{s.donation_count} donations</Text>
                                     </Card>
@@ -585,10 +585,10 @@ function CashFlowTab() {
     return (
         <>
             <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
-                <Col xs={12} md={6}><Card><Statistic title="Inflow" value={totals?.inflow || 0} suffix="BDT" valueStyle={{ color: '#3f8600' }} /></Card></Col>
-                <Col xs={12} md={6}><Card><Statistic title="Outflow" value={totals?.outflow || 0} suffix="BDT" valueStyle={{ color: '#cf1322' }} /></Card></Col>
-                <Col xs={12} md={6}><Card><Statistic title="Net" value={totals?.net || 0} suffix="BDT" valueStyle={{ color: (totals?.net || 0) < 0 ? '#cf1322' : '#3f8600' }} /></Card></Col>
-                <Col xs={12} md={6}><Card><Statistic title="Closing Balance" value={totals?.closing_balance || 0} suffix="BDT" /></Card></Col>
+                <Col xs={12} md={6}><Card><Statistic title="Inflow" value={totals?.inflow || 0} suffix="POUND" valueStyle={{ color: '#3f8600' }} /></Card></Col>
+                <Col xs={12} md={6}><Card><Statistic title="Outflow" value={totals?.outflow || 0} suffix="POUND" valueStyle={{ color: '#cf1322' }} /></Card></Col>
+                <Col xs={12} md={6}><Card><Statistic title="Net" value={totals?.net || 0} suffix="POUND" valueStyle={{ color: (totals?.net || 0) < 0 ? '#cf1322' : '#3f8600' }} /></Card></Col>
+                <Col xs={12} md={6}><Card><Statistic title="Closing Balance" value={totals?.closing_balance || 0} suffix="POUND" /></Card></Col>
             </Row>
 
             <Row gutter={[12, 12]} style={{ marginBottom: 16 }}>
@@ -666,8 +666,8 @@ function DonationLedgerTab() {
         <>
             <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
                 <Col xs={12} md={8}><Card><Statistic title="Donations" value={totals?.count || 0} /></Card></Col>
-                <Col xs={12} md={8}><Card><Statistic title="Total Amount" value={totals?.amount || 0} suffix="BDT" valueStyle={{ color: '#3f8600' }} /></Card></Col>
-                <Col xs={24} md={8}><Card><Statistic title="Closing Balance" value={totals?.closing_balance || 0} suffix="BDT" /></Card></Col>
+                <Col xs={12} md={8}><Card><Statistic title="Total Amount" value={totals?.amount || 0} suffix="POUND" valueStyle={{ color: '#3f8600' }} /></Card></Col>
+                <Col xs={24} md={8}><Card><Statistic title="Closing Balance" value={totals?.closing_balance || 0} suffix="POUND" /></Card></Col>
             </Row>
 
             <Row gutter={[12, 12]} style={{ marginBottom: 16 }}>
@@ -739,11 +739,11 @@ function ProjectBalanceTab() {
     return (
         <>
             <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
-                <Col xs={12} md={5}><Card><Statistic title="Budget"    value={totals?.budget    || 0} suffix="BDT" /></Card></Col>
-                <Col xs={12} md={5}><Card><Statistic title="Donations" value={totals?.donations || 0} suffix="BDT" valueStyle={{ color: '#3f8600' }} /></Card></Col>
-                <Col xs={12} md={5}><Card><Statistic title="Expenses"  value={totals?.expenses  || 0} suffix="BDT" valueStyle={{ color: '#cf1322' }} /></Card></Col>
-                <Col xs={12} md={5}><Card><Statistic title="Remaining" value={totals?.remaining || 0} suffix="BDT" /></Card></Col>
-                <Col xs={24} md={4}><Card><Statistic title="Cash on Hand" value={totals?.cash_on_hand || 0} suffix="BDT" valueStyle={{ color: (totals?.cash_on_hand || 0) < 0 ? '#cf1322' : '#3f8600' }} /></Card></Col>
+                <Col xs={12} md={5}><Card><Statistic title="Budget"    value={totals?.budget    || 0} suffix="POUND" /></Card></Col>
+                <Col xs={12} md={5}><Card><Statistic title="Donations" value={totals?.donations || 0} suffix="POUND" valueStyle={{ color: '#3f8600' }} /></Card></Col>
+                <Col xs={12} md={5}><Card><Statistic title="Expenses"  value={totals?.expenses  || 0} suffix="POUND" valueStyle={{ color: '#cf1322' }} /></Card></Col>
+                <Col xs={12} md={5}><Card><Statistic title="Remaining" value={totals?.remaining || 0} suffix="POUND" /></Card></Col>
+                <Col xs={24} md={4}><Card><Statistic title="Cash on Hand" value={totals?.cash_on_hand || 0} suffix="POUND" valueStyle={{ color: (totals?.cash_on_hand || 0) < 0 ? '#cf1322' : '#3f8600' }} /></Card></Col>
             </Row>
 
             <Space style={{ marginBottom: 16 }}>
@@ -796,13 +796,13 @@ function FinancialReconciliationTab() {
                     <Card><Statistic title="Reconciled" value={s?.reconciled?.count || 0} suffix={`/ ${total}`} valueStyle={{ color: '#3f8600' }} /></Card>
                 </Col>
                 <Col xs={12} md={6}>
-                    <Card><Statistic title="Reconciled amount" value={s?.reconciled?.amount || 0} suffix="BDT" valueStyle={{ color: '#3f8600' }} /></Card>
+                    <Card><Statistic title="Reconciled amount" value={s?.reconciled?.amount || 0} suffix="POUND" valueStyle={{ color: '#3f8600' }} /></Card>
                 </Col>
                 <Col xs={12} md={6}>
                     <Card><Statistic title="Unreconciled" value={s?.unreconciled?.count || 0} valueStyle={{ color: '#cf1322' }} /></Card>
                 </Col>
                 <Col xs={12} md={6}>
-                    <Card><Statistic title="Unreconciled amount" value={s?.unreconciled?.amount || 0} suffix="BDT" valueStyle={{ color: '#cf1322' }} /></Card>
+                    <Card><Statistic title="Unreconciled amount" value={s?.unreconciled?.amount || 0} suffix="POUND" valueStyle={{ color: '#cf1322' }} /></Card>
                 </Col>
             </Row>
 

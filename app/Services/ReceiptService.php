@@ -46,7 +46,7 @@ class ReceiptService
             ['Student',          $donation->student?->student_name ?: '— (General Project Funding)'],
             ['Payment Method',   $donation->payment_method ?? '—'],
             ['Status',           strtoupper($donation->status ?? '—')],
-            ['Amount',           number_format((float) $donation->amount, 2) . ' BDT'],
+            ['Amount',           number_format((float) $donation->amount, 2) . ' POUND'],
         ];
 
         $row = 4;

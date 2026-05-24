@@ -33,7 +33,7 @@ const fundingColor = (status) => {
     }
 };
 
-const formatBdt = (n) => `${Number(n || 0).toLocaleString()} BDT`;
+const formatBdt = (n) => `${Number(n || 0).toLocaleString()} POUND`;
 
 export default function StudentsPage() {
     const { can } = usePermissions();

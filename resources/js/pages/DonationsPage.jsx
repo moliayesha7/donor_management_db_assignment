@@ -53,7 +53,7 @@ const PAYMENT_METHODS = [
     { value: 'Nagad', label: 'Nagad' },
 ];
 
-const formatBdt = (n) => `${Number(n || 0).toLocaleString()} BDT`;
+const formatBdt = (n) => `${Number(n || 0).toLocaleString()} POUND`;
 
 export default function DonationsPage() {
     const { can } = usePermissions();
