@@ -1,4 +1,4 @@
 First feedback -05-24-2026
-1.BDT to  pound
+1.Multi currency select-
 2.No Notification option 
-3.Sms enable
+3.refactor: update currency BDT to Pound
